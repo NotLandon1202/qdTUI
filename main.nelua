@@ -1,0 +1,17 @@
+-- Quick and Dirty TUI Library (qdTUI)
+-- Copyright (c) 2025 Landon McLean
+
+require 'string'
+require 'io'
+require 'span'
+
+local function renderButton(text: string, isSelected: boolean): string
+    local ansiCode: string = ""
+    local resetCode: string = "\x1b[0m "
+    if isSelected then
+        ansiCode = "\x1b[30;47m"
+    end
+    return (ansiCode .. "[ " .. text .. " ]" .. resetCode)
+end
+
+print( (renderButton("Unselected Button", false)) .. (renderButton("Selected Button", true)))
