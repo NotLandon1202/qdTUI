@@ -1,17 +1,46 @@
 -- Quick and Dirty TUI Library (qdTUI)
 -- Copyright (c) 2025 Landon McLean
 
-require 'string'
-require 'io'
-require 'span'
+## pragmas.nogc = true
 
-local function renderButton(text: string, isSelected: boolean): string
-    local ansiCode: string = ""
-    local resetCode: string = "\x1b[0m "
-    if isSelected then
-        ansiCode = "\x1b[30;47m"
-    end
-    return (ansiCode .. "[ " .. text .. " ]" .. resetCode)
+require 'allocators.default'
+require 'string'
+
+-- Struct for button creation.
+global Button = @record{
+    text: string,
+    selected: boolean,
+    -- Unused, for now
+    -- row: integer,
+    -- colulmn: integer
+}
+
+-- Creation method
+function Button.create(text: string): *Button
+    local newButton: *Button = default_allocator:new(@Button)
+    newButton.text = text
+    return newButton
 end
 
-print( (renderButton("Unselected Button", false)) .. (renderButton("Selected Button", true)))
+-- Rendering method for the Button
+function Button:draw(button: Button): string
+    local ansiCode: string
+    local resetCode: string = "\x1b[0m "
+    if self.selected then
+        ansiCode = "\x1b[30;47m"
+    end
+    return (ansiCode .. "[ " .. self.text .. " ]" .. resetCode)
+end
+
+
+local exampleButton: *Button = Button.create("Placeholder")
+local secondButton: *Button = Button.create("Selected Button")
+secondButton.selected = true
+
+-- Will evenutally be automatically displayed to the screen
+print (exampleButton:draw())
+print (secondButton:draw())
+
+
+-- Program end: Deallocate memory
+delete(exampleButton)
